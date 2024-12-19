@@ -1,0 +1,68 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv("netflix_titles.csv", encoding="latin")
+
+df.head(3)
+
+columns_to_impute = ['director', 'country', 'cast', 'rating', 'duration']
+for column in columns_to_impute:
+  df[column].fillna("Unknown", inplace = True)
+
+tv_show = df[df['type'] == 'TV Show']
+movie = df[df['type'] == 'Movie']
+
+tv_no = len(tv_show)
+movie_no = len(movie)
+genre = ["TV Show", "Movie"]
+number = [tv_no, movie_no]
+
+
+plt.bar(genre, number, color = "blue")
+plt.title("Most popular types of content on the platform")
+plt.xlabel("Type")
+plt.ylabel("Number")
+plt.show()
+
+##Conclusion: Movie is the more popular type of content on the platform
+
+#Task Two: Which country contributes to the most content - US
+import plotly.express as px
+ax = px.histogram(df, x="country", marginal = "box", title = "country")
+ax.update_layout(bargap = 0.5)
+
+##Release year affecting popularity? - 2018
+
+fig = px.histogram(df, x="release_year", title="release_year", color = "release_year")
+
+fig.update_layout(bargap=0.5)
+
+fig.show()
+
+#Which genres are most prevalent on the platform?
+genres = df["listed_in"]
+genre_counts = genres.str.split(", ").explode().value_counts()
+top_5_genres = genre_counts.head(10)
+print("Top 5 most popular genres:-", top_5_genres)
+
+ge = genres.str.split(", ").explode()
+genre_list = []
+for i in ge:
+  if i not in genre_list:
+    genre_list.append(i)
+print(genre_list)
+
+plt.figure(figsize=(10, 12))
+plt.barh(genre_list, genre_counts, color="maroon")
+plt.title("Distribution and Popularity of different content categories")
+plt.xlabel("Genre")
+plt.ylabel("Popularity")
+plt.show()
+
+fig = px.histogram(df, x="rating", title="Rating", color="rating")
+
+fig.update_layout(bargap=0.2)
+
+fig.show()
